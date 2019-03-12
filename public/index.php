@@ -33,6 +33,15 @@ if (isset($_POST['push'])) {
   header("Location: " . $_SERVER['PHP_SELF']);
 }
 
+if (isset($_POST['delete'])) {
+  $id = $_POST['delete'];
+  $stmt = $pdo->prepare("DELETE FROM board WHERE id = {$id}");
+  $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+  $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
+  $stmt->execute();
+  header("Location: " . $_SERVER['PHP_SELF']);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -57,11 +66,14 @@ if (isset($_POST['push'])) {
     <?php
       $sql = "SELECT * FROM board ORDER BY id DESC";
       $rows = $pdo->query($sql);
-      foreach ($rows as $row) {
-        echo h($row['comment']).'('.h($row['name']).')';
-        echo '<br>';
-      }
     ?>
+    <form action="" method="post">
+        <?php foreach ($rows as $row) : ?>
+          <?= h($row['comment']).'('.h($row['name']).')'; ?>
+          <button type="submit" name="delete" value="<?= h($row['id']) ?>">削除</button>
+          <br>
+        <?php endforeach ; ?>
+    </form>
   </section>
 </body>
 </html>
