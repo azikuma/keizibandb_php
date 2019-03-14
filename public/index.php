@@ -35,7 +35,7 @@ if (isset($_POST['push'])) {
 
 if (isset($_POST['delete'])) {
   $id = $_POST['delete'];
-$stmt = $pdo->prepare("DELETE FROM board WHERE id = ?");
+$stmt = $pdo->prepare("DELETE FROM board WHERE id = {$id}");
   $stmt->bindParam(':name', $name, PDO::PARAM_STR);
   $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
   $stmt->execute();
