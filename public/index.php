@@ -35,7 +35,7 @@ if (isset($_POST['push'])) {
 
 if (isset($_POST['delete'])) {
   $id = $_POST['delete'];
-$stmt = $pdo->prepare("DELETE FROM board WHERE id = {$id}");
+$stmt = $pdo->prepare("DELETE FROM board WHERE id = ?");
   $stmt->bindParam(':name', $name, PDO::PARAM_STR);
   $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
   $stmt->execute();
@@ -70,6 +70,7 @@ $stmt = $pdo->prepare("DELETE FROM board WHERE id = {$id}");
     <form action="" method="post">
         <?php foreach ($rows as $row) : ?>
           <?= h($row['comment']).'('.h($row['name']).')'; ?>
+          <button type="submit" name="edit" value="<?= h($row['id']) ?>">編集</button>
           <button type="submit" name="delete" value="<?= h($row['id']) ?>">削除</button>
           <br>
         <?php endforeach ; ?>
