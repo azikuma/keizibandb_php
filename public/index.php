@@ -15,8 +15,6 @@ if (isset($_POST['new'])) {
 if (isset($_POST['delete'])) {
   $id = $_POST['delete'];
   $stmt = $pdo->prepare("DELETE FROM board WHERE id = :id");
-  $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-  $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
   $stmt->execute();
   header("Location: " . $_SERVER['SCRIPT_NAME']);
 }
@@ -37,7 +35,6 @@ if (isset($_POST['delete'])) {
       名前: <input type="text" name="name" value=""><br>
       本文: <input type="text" name="comment" value=""><br>
       <button type="submit" name="new">submit</button>
-      <input type="hidden" name="token" value="<?= h(sha1(session_id())) ?>">
     </form>
   </section>
   <section>
@@ -51,7 +48,7 @@ if (isset($_POST['delete'])) {
           <?= h($row['comment']).'('.h($row['name']).')'; ?>
           <button type="submit" name="delete" value="<?= h($row['id']) ?>">削除</button>
         </form>
-        <button><a href="edit.php?id=<?= $row['id']; ?>">編集</a></button>
+        <button><a href="edit.php?id=<?= h($row['id']); ?>">編集</a></button>
         <br>
       <?php endforeach ; ?>
     
