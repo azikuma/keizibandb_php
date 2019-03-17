@@ -21,10 +21,6 @@ if (isset($_POST['delete'])) {
   header("Location: " . $_SERVER['SCRIPT_NAME']);
 }
 
-if(isset($_POST['edit'])) {
-  header("Location: edit.php");
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -54,8 +50,8 @@ if(isset($_POST['edit'])) {
         <form action="" method="post">
           <?= h($row['comment']).'('.h($row['name']).')'; ?>
           <button type="submit" name="delete" value="<?= h($row['id']) ?>">削除</button>
-          <button><a href="edit.php?id=<?= $row['id']; ?>">編集</a></button>
         </form>
+        <button><a href="edit.php?id=<?= $row['id']; ?>">編集</a></button>
         <br>
       <?php endforeach ; ?>
     
