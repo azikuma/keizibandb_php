@@ -1,28 +1,7 @@
 <?php
+require('dbconnect.php');
 
-//コメント追加
-
-function h($str) {
-  return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
-}
-
-$db = parse_url($_SERVER['CLEARDB_DATABASE_URL']);
-$db['dbname'] = ltrim($db['path'], '/');
-$dsn = "mysql:host={$db['host']};dbname={$db['dbname']};charset=utf8";
-
-try {
-  // connect
-  $pdo = new PDO($dsn, $db['user'], $db['pass']);
-  $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-
-} catch (PDOException $e) {
-  echo $e->getMessage();
-  exit;
-}
-
-if (isset($_POST['push'])) {
+if (isset($_POST['new'])) {
   $name = $_POST['name'];
   $comment = $_POST['comment'];
   $stmt = $pdo->prepare("INSERT INTO board (name, comment) VALUES (:name, :comment)");
@@ -30,16 +9,20 @@ if (isset($_POST['push'])) {
   $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
   $stmt->execute();
   $pdo->query($stmt);
-  header("Location: " . $_SERVER['PHP_SELF']);
+  header("Location: " . $_SERVER['SCRIPT_NAME']);
 }
 
 if (isset($_POST['delete'])) {
   $id = $_POST['delete'];
-$stmt = $pdo->prepare("DELETE FROM board WHERE id = {$id}");
+  $stmt = $pdo->prepare("DELETE FROM board WHERE id = :id");
   $stmt->bindParam(':name', $name, PDO::PARAM_STR);
   $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
   $stmt->execute();
-  header("Location: " . $_SERVER['PHP_SELF']);
+  header("Location: " . $_SERVER['SCRIPT_NAME']);
+}
+
+if(isset($_POST['edit'])) {
+  header("Location: edit.php");
 }
 
 ?>
@@ -57,7 +40,7 @@ $stmt = $pdo->prepare("DELETE FROM board WHERE id = {$id}");
     <form action="" method="post">
       名前: <input type="text" name="name" value=""><br>
       本文: <input type="text" name="comment" value=""><br>
-      <button type="submit" name="push">submit</button>
+      <button type="submit" name="new">submit</button>
       <input type="hidden" name="token" value="<?= h(sha1(session_id())) ?>">
     </form>
   </section>
@@ -67,14 +50,15 @@ $stmt = $pdo->prepare("DELETE FROM board WHERE id = {$id}");
       $sql = "SELECT * FROM board ORDER BY id DESC";
       $rows = $pdo->query($sql);
     ?>
-    <form action="" method="post">
-        <?php foreach ($rows as $row) : ?>
+      <?php foreach ($rows as $row) : ?>
+        <form action="" method="post">
           <?= h($row['comment']).'('.h($row['name']).')'; ?>
-          <button type="submit" name="edit" value="<?= h($row['id']) ?>">編集</button>
           <button type="submit" name="delete" value="<?= h($row['id']) ?>">削除</button>
-          <br>
-        <?php endforeach ; ?>
-    </form>
+          <button><a href="edit.php?id=<?= $row['id']; ?>">編集</a></button>
+        </form>
+        <br>
+      <?php endforeach ; ?>
+    
   </section>
 </body>
 </html>
