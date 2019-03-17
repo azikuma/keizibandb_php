@@ -14,7 +14,7 @@ if (isset($_POST['new'])) {
 
 if (isset($_POST['delete'])) {
   $id = $_POST['delete'];
-  $stmt = $pdo->prepare("DELETE FROM board WHERE id = :id");
+$stmt = $pdo->prepare("DELETE FROM board WHERE id = {$id}");
   $stmt->execute();
   header("Location: " . $_SERVER['SCRIPT_NAME']);
 }
